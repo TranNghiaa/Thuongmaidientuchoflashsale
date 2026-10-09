@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Identity\ShopFlow.Modules.Identity\ShopFlow.Modules.Identity.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Catalog\ShopFlow.Modules.Catalog\ShopFlow.Modules.Catalog.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\ShopFlow.Modules.Inventory\ShopFlow.Modules.Inventory.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Ordering\ShopFlow.Modules.Ordering\ShopFlow.Modules.Ordering.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Payment\ShopFlow.Modules.Payment\ShopFlow.Modules.Payment.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Notification\ShopFlow.Modules.Notification\ShopFlow.Modules.Notification.csproj" />
+  </ItemGroup>
+
+</Project>

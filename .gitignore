@@ -1,0 +1,32 @@
+# Build and compilation outputs
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Environment & Sensitive configs
+.env
+*.env.local
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Tool cache
+.gemini/

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Only reference Contracts, NOT the Inventory module to avoid proto type conflicts -->
+    <ProjectReference Include="..\ShopFlow.Modules.Inventory.Contracts\ShopFlow.Modules.Inventory.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Tools">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Use the shared proto, generate Client stubs only -->
+    <Protobuf Include="..\ShopFlow.Modules.Inventory\Protos\inventory.proto" GrpcServices="Client" Link="Protos\inventory.proto" />
+  </ItemGroup>
+
+</Project>

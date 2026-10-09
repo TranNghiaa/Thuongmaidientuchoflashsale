@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option csharp_namespace = "ShopFlow.Modules.Inventory.Protos";
+
+package inventory;
+
+service InventoryService {
+  rpc GetSkuInfo (GetSkuInfoRequest) returns (GetSkuInfoResponse);
+  rpc Reserve (ReserveRequest) returns (ReserveResponse);
+  rpc Commit (CommitRequest) returns (CommitResponse);
+  rpc Release (ReleaseRequest) returns (ReleaseResponse);
+}
+
+message GetSkuInfoRequest {
+  string skuId = 1;
+}
+
+message GetSkuInfoResponse {
+  string skuId = 1;
+  int32 availableQuantity = 2;
+}
+
+message ReserveItemDto {
+  string skuId = 1;
+  int32 quantity = 2;
+}
+
+message ReserveRequest {
+  string referenceId = 1;
+  repeated ReserveItemDto items = 2;
+}
+
+message ReserveResponse {
+  bool success = 1;
+}
+
+message CommitRequest {
+  string referenceId = 1;
+}
+
+message CommitResponse {
+  bool success = 1;
+}
+
+message ReleaseRequest {
+  string referenceId = 1;
+}
+
+message ReleaseResponse {
+  bool success = 1;
+}

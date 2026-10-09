@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ShopFlow.BuildingBlocks\ShopFlow.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\ShopFlow.Modules.Notification.Contracts\ShopFlow.Modules.Notification.Contracts.csproj" />
+    <ProjectReference Include="..\..\Ordering\ShopFlow.Modules.Ordering.Contracts\ShopFlow.Modules.Ordering.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
+

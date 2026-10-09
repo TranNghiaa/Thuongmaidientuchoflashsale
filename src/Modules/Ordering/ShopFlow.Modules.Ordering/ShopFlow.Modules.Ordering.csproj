@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ShopFlow.BuildingBlocks\ShopFlow.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\ShopFlow.Modules.Ordering.Contracts\ShopFlow.Modules.Ordering.Contracts.csproj" />
+    <ProjectReference Include="..\..\Catalog\ShopFlow.Modules.Catalog.Contracts\ShopFlow.Modules.Catalog.Contracts.csproj" />
+    <ProjectReference Include="..\..\Inventory\ShopFlow.Modules.Inventory.Contracts\ShopFlow.Modules.Inventory.Contracts.csproj" />
+    <ProjectReference Include="..\..\Payment\ShopFlow.Modules.Payment.Contracts\ShopFlow.Modules.Payment.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Tools">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\Inventory\ShopFlow.Modules.Inventory\Protos\inventory.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
+
