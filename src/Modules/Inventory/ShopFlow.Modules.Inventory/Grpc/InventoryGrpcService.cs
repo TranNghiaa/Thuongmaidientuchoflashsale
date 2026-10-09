@@ -3,7 +3,7 @@ using Proto = ShopFlow.Modules.Inventory.Protos;
 
 namespace ShopFlow.Modules.Inventory.Grpc;
 
-public class InventoryGrpcService : Proto.InventoryService.InventoryServiceBase
+internal class InventoryGrpcService : Proto.InventoryService.InventoryServiceBase
 {
     public override Task<Proto.GetSkuInfoResponse> GetSkuInfo(Proto.GetSkuInfoRequest request, ServerCallContext context)
     {

@@ -2,19 +2,19 @@ using ShopFlow.Modules.Catalog.Contracts;
 
 namespace ShopFlow.Modules.Ordering.Application;
 
-public class OrderPricingItem
+internal class OrderPricingItem
 {
     public string SkuId { get; set; } = string.Empty;
     public int Quantity { get; set; }
 }
 
-public class OrderPricingResult
+internal class OrderPricingResult
 {
     public decimal TotalAmount { get; set; }
     public List<OrderPricingResultItem> Items { get; set; } = new();
 }
 
-public class OrderPricingResultItem
+internal class OrderPricingResultItem
 {
     public string SkuId { get; set; } = string.Empty;
     public int Quantity { get; set; }

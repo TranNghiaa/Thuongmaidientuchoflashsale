@@ -4,7 +4,7 @@ using ShopFlow.Modules.Ordering.Contracts.Events;
 
 namespace ShopFlow.Modules.Notification.Consumers;
 
-public class OrderPaidFaultConsumer : IConsumer<Fault<OrderPaid>>
+internal class OrderPaidFaultConsumer : IConsumer<Fault<OrderPaid>>
 {
     private readonly ILogger<OrderPaidFaultConsumer> _logger;
 

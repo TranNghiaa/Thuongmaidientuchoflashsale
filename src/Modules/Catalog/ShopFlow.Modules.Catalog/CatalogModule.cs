@@ -24,23 +24,20 @@ public static class CatalogModule
         services.AddScoped<IModuleSeeder, CatalogSeeder>();
         services.AddScoped<ShopFlow.Modules.Catalog.Contracts.ICatalogApi, ShopFlow.Modules.Catalog.Application.CatalogApi>();
 
-        var minioUrl = configuration["Minio:Endpoint"] ?? configuration["Minio:ServiceURL"];
-        var minioAccessKey = configuration["Minio:AccessKey"];
-        var minioSecretKey = configuration["Minio:SecretKey"];
+        var minioUrl = configuration["Minio:Endpoint"] ?? configuration["Minio:ServiceURL"] ?? "http://localhost:9000";
+        var minioAccessKey = configuration["Minio:AccessKey"] ?? "minioadmin";
+        var minioSecretKey = configuration["Minio:SecretKey"] ?? "minioadmin";
 
-        if (!string.IsNullOrWhiteSpace(minioUrl))
+        services.AddSingleton<Amazon.S3.IAmazonS3>(sp =>
         {
-            services.AddSingleton<Amazon.S3.IAmazonS3>(sp =>
+            var config = new Amazon.S3.AmazonS3Config
             {
-                var config = new Amazon.S3.AmazonS3Config
-                {
-                    ServiceURL = minioUrl,
-                    ForcePathStyle = true
-                };
-                var credentials = new Amazon.Runtime.BasicAWSCredentials(minioAccessKey, minioSecretKey);
-                return new Amazon.S3.AmazonS3Client(credentials, config);
-            });
-        }
+                ServiceURL = minioUrl,
+                ForcePathStyle = true
+            };
+            var credentials = new Amazon.Runtime.BasicAWSCredentials(minioAccessKey, minioSecretKey);
+            return new Amazon.S3.AmazonS3Client(credentials, config);
+        });
 
         return services;
     }
@@ -227,14 +224,14 @@ public static class CatalogModule
     }
 }
 
-public class CreateProductRequest
+internal class CreateProductRequest
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal BasePrice { get; set; }
 }
 
-public class UpdateProductRequest
+internal class UpdateProductRequest
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -242,7 +239,7 @@ public class UpdateProductRequest
     public bool IsActive { get; set; }
 }
 
-public class CreateFlashSaleRequest
+internal class CreateFlashSaleRequest
 {
     public string SkuId { get; set; } = string.Empty;
     public decimal SalePrice { get; set; }
@@ -250,7 +247,7 @@ public class CreateFlashSaleRequest
     public DateTime EndsAt { get; set; }
 }
 
-public class ProductDto
+internal class ProductDto
 {
     public Guid Id { get; set; }
     public string SkuId { get; set; } = string.Empty;
@@ -263,7 +260,7 @@ public class ProductDto
     public DateTime CreatedAt { get; set; }
 }
 
-public class UploadImageRequest
+internal class UploadImageRequest
 {
     public string Key { get; set; } = string.Empty;
 }

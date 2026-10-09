@@ -216,24 +216,24 @@ public static class IdentityModule
     }
 }
 
-public class RegisterRequest
+internal class RegisterRequest
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }
 
-public class LoginRequest
+internal class LoginRequest
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }
 
-public class RefreshRequest
+internal class RefreshRequest
 {
     public string RefreshToken { get; set; } = string.Empty;
 }
 
-public class LogoutRequest
+internal class LogoutRequest
 {
     public string RefreshToken { get; set; } = string.Empty;
 }

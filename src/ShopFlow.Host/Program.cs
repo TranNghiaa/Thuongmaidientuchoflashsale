@@ -184,8 +184,6 @@ app.MapOrderingEndpoints();
 app.MapPaymentEndpoints();
 app.MapNotificationEndpoints();
 
-app.MapGrpcService<ShopFlow.Modules.Inventory.Grpc.InventoryGrpcService>();
-
 app.Run();
 return 0;
 

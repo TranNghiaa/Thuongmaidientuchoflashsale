@@ -56,7 +56,7 @@ public static class PaymentModule
     }
 }
 
-public class ProcessPaymentRequest
+internal class ProcessPaymentRequest
 {
     public string ReferenceId { get; set; } = string.Empty;
     public decimal Amount { get; set; }

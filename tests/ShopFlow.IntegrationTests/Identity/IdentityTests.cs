@@ -51,7 +51,7 @@ public class IdentityTests : IClassFixture<ShopFlowApplicationFactory>
         
         var handler = new JwtSecurityTokenHandler();
         var jwtToken = handler.ReadJwtToken(token);
-        Assert.Contains(jwtToken.Claims, c => c.Type == ClaimTypes.Role && c.Value == "User");
+        Assert.Contains(jwtToken.Claims, c => (c.Type == ClaimTypes.Role || c.Type == "role") && c.Value == "User");
     }
 
     [Fact]

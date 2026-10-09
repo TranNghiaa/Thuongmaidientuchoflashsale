@@ -76,55 +76,64 @@ public static class InventoryModule
                 return Results.BadRequest(new { code = "INVALID_REQUEST", message = "ReferenceId and Items are required." });
 
             var skus = req.Items.Select(x => x.SkuId).ToList();
-            var inventoryItems = await db.InventoryItems.Where(x => skus.Contains(x.SkuId)).ToListAsync();
 
-            if (inventoryItems.Count != skus.Count)
-                return Results.BadRequest(new { code = "SKU_NOT_FOUND", message = "Some SKUs not found." });
-
-            foreach (var reqItem in req.Items)
+            for (int retry = 0; retry < 10; retry++)
             {
-                var invItem = inventoryItems.First(x => x.SkuId == reqItem.SkuId);
-                if (invItem.AvailableQuantity < reqItem.Quantity)
+                var inventoryItems = await db.InventoryItems.Where(x => skus.Contains(x.SkuId)).ToListAsync();
+
+                if (inventoryItems.Count != skus.Count)
+                    return Results.BadRequest(new { code = "SKU_NOT_FOUND", message = "Some SKUs not found." });
+
+                foreach (var reqItem in req.Items)
                 {
-                    return Results.BadRequest(new { code = "OUT_OF_STOCK", message = $"Not enough stock for SKU {reqItem.SkuId}" });
+                    var invItem = inventoryItems.First(x => x.SkuId == reqItem.SkuId);
+                    if (invItem.AvailableQuantity < reqItem.Quantity)
+                    {
+                        return Results.BadRequest(new { code = "OUT_OF_STOCK", message = $"Not enough stock for SKU {reqItem.SkuId}" });
+                    }
                 }
-            }
 
-            // Perform reservation
-            var reservation = new Reservation
-            {
-                Id = Guid.NewGuid(),
-                ReferenceId = req.ReferenceId,
-                ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(15),
-                Status = "Pending"
-            };
-
-            foreach (var reqItem in req.Items)
-            {
-                var invItem = inventoryItems.First(x => x.SkuId == reqItem.SkuId);
-                invItem.AvailableQuantity -= reqItem.Quantity;
-                invItem.ReservedQuantity += reqItem.Quantity;
-                
-                reservation.Items.Add(new ReservationItem
+                // Perform reservation
+                var reservation = new Reservation
                 {
                     Id = Guid.NewGuid(),
-                    ReservationId = reservation.Id,
-                    SkuId = reqItem.SkuId,
-                    Quantity = reqItem.Quantity
-                });
-            }
+                    ReferenceId = req.ReferenceId,
+                    ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(15),
+                    Status = "Pending"
+                };
 
-            db.Reservations.Add(reservation);
-            
-            try
-            {
-                await db.SaveChangesAsync();
-                return Results.Ok(new { reservation.Id, reservation.ReferenceId, reservation.ExpiresAt });
+                foreach (var reqItem in req.Items)
+                {
+                    var invItem = inventoryItems.First(x => x.SkuId == reqItem.SkuId);
+                    invItem.AvailableQuantity -= reqItem.Quantity;
+                    invItem.ReservedQuantity += reqItem.Quantity;
+                    
+                    reservation.Items.Add(new ReservationItem
+                    {
+                        Id = Guid.NewGuid(),
+                        ReservationId = reservation.Id,
+                        SkuId = reqItem.SkuId,
+                        Quantity = reqItem.Quantity
+                    });
+                }
+
+                db.Reservations.Add(reservation);
+                
+                try
+                {
+                    await db.SaveChangesAsync();
+                    return Results.Ok(new { reservation.Id, reservation.ReferenceId, reservation.ExpiresAt });
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    db.ChangeTracker.Clear();
+                    if (retry == 9)
+                        return Results.Conflict(new { code = "CONCURRENCY_ERROR" });
+                    
+                    await Task.Delay(Random.Shared.Next(10, 50));
+                }
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                return Results.Conflict(new { code = "CONCURRENCY_ERROR" });
-            }
+            return Results.Conflict(new { code = "CONCURRENCY_ERROR" });
         });
 
         group.MapPost("/inventory/commit", async (CommitRequest req, InventoryDbContext db) =>
@@ -198,33 +207,34 @@ public static class InventoryModule
             }
         });
 
+        endpoints.MapGrpcService<ShopFlow.Modules.Inventory.Grpc.InventoryGrpcService>();
         return endpoints;
     }
 }
 
-public class ReserveRequest
+internal class ReserveRequest
 {
     public string ReferenceId { get; set; } = string.Empty;
     public List<ReserveItem> Items { get; set; } = new();
 }
 
-public class ReserveItem
+internal class ReserveItem
 {
     public string SkuId { get; set; } = string.Empty;
     public int Quantity { get; set; }
 }
 
-public class CommitRequest
+internal class CommitRequest
 {
     public string ReferenceId { get; set; } = string.Empty;
 }
 
-public class ReleaseRequest
+internal class ReleaseRequest
 {
     public string ReferenceId { get; set; } = string.Empty;
 }
 
-public class AddInventoryRequest
+internal class AddInventoryRequest
 {
     public string SkuId { get; set; } = string.Empty;
     public int Quantity { get; set; }

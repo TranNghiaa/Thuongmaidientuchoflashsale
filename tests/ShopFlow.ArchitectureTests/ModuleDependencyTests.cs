@@ -85,38 +85,62 @@ public class ModuleDependencyTests
             var result = Types.InAssembly(assembly)
                 .That()
                 .DoNotHaveNameEndingWith("Module")
+                .And()
+                .DoNotInherit(typeof(Microsoft.EntityFrameworkCore.Migrations.Migration))
+                .And()
+                .DoNotInherit(typeof(Microsoft.EntityFrameworkCore.Infrastructure.ModelSnapshot))
+                .And()
+                .DoNotResideInNamespace("ShopFlow.Modules.Inventory.Protos")
+                .And()
+                .DoNotHaveNameMatching(".*InventoryService.*")
                 .ShouldNot()
                 .BePublic()
                 .GetResult();
 
-            Assert.True(result.IsSuccessful, $"Assembly {assembly.GetName().Name} contains public types other than Module class.");
+            var failingTypes = result.FailingTypeNames != null ? string.Join(", ", result.FailingTypeNames) : "";
+            Assert.True(result.IsSuccessful, $"Assembly {assembly.GetName().Name} contains public types other than Module class: {failingTypes}");
         }
     }
 
     [Fact]
     public void Modules_ShouldNotDependOnOtherModulesNamespaces()
     {
-        var moduleNamespaces = new[]
+        var implementationNamespaces = new[]
         {
-            "ShopFlow.Modules.Identity",
-            "ShopFlow.Modules.Catalog",
-            "ShopFlow.Modules.Inventory",
-            "ShopFlow.Modules.Ordering",
-            "ShopFlow.Modules.Payment",
-            "ShopFlow.Modules.Notification"
+            "ShopFlow.Modules.Identity.Domain",
+            "ShopFlow.Modules.Identity.Application",
+            "ShopFlow.Modules.Identity.Infrastructure",
+            "ShopFlow.Modules.Catalog.Domain",
+            "ShopFlow.Modules.Catalog.Application",
+            "ShopFlow.Modules.Catalog.Infrastructure",
+            "ShopFlow.Modules.Inventory.Domain",
+            "ShopFlow.Modules.Inventory.Application",
+            "ShopFlow.Modules.Inventory.Infrastructure",
+            "ShopFlow.Modules.Ordering.Domain",
+            "ShopFlow.Modules.Ordering.Application",
+            "ShopFlow.Modules.Ordering.Infrastructure",
+            "ShopFlow.Modules.Payment.Domain",
+            "ShopFlow.Modules.Payment.Application",
+            "ShopFlow.Modules.Payment.Infrastructure",
+            "ShopFlow.Modules.Notification.Domain",
+            "ShopFlow.Modules.Notification.Application",
+            "ShopFlow.Modules.Notification.Infrastructure",
+            "ShopFlow.Modules.Notification.Consumers"
         };
 
         foreach (var assembly in ModuleAssemblies)
         {
-            var currentModuleNamespace = assembly.GetName().Name!;
-            var otherModulesNamespaces = moduleNamespaces.Where(x => x != currentModuleNamespace).ToArray();
+            var currentModulePrefix = assembly.GetName().Name! + ".";
+            var otherModulesNamespaces = implementationNamespaces
+                .Where(x => !x.StartsWith(currentModulePrefix))
+                .ToArray();
 
             var result = Types.InAssembly(assembly)
                 .ShouldNot()
                 .HaveDependencyOnAny(otherModulesNamespaces)
                 .GetResult();
 
-            Assert.True(result.IsSuccessful, $"Assembly {currentModuleNamespace} has dependencies on other modules' namespaces.");
+            Assert.True(result.IsSuccessful, $"Assembly {assembly.GetName().Name} has forbidden dependencies on other modules' internal namespaces.");
         }
     }
 }

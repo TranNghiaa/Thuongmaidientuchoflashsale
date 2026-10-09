@@ -35,17 +35,11 @@ public class ShopFlowApplicationFactory : WebApplicationFactory<Program>, IAsync
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration(config =>
-        {
-            config.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:Default"] = _dbContainer.GetConnectionString(),
-                ["Messaging:Enabled"] = "false",
-                ["Jwt:Secret"] = "IntegrationTestSecretMustBe32CharactersOrMore!",
-                ["Jwt:Issuer"] = "IntegrationTest",
-                ["Jwt:Audience"] = "IntegrationTest"
-            });
-        });
+        builder.UseSetting("ConnectionStrings:Default", _dbContainer.GetConnectionString());
+        builder.UseSetting("Messaging:Enabled", "false");
+        builder.UseSetting("Jwt:Secret", "IntegrationTestSecretMustBe32CharactersOrMore!");
+        builder.UseSetting("Jwt:Issuer", "IntegrationTest");
+        builder.UseSetting("Jwt:Audience", "IntegrationTest");
         
         builder.UseEnvironment("IntegrationTesting");
     }

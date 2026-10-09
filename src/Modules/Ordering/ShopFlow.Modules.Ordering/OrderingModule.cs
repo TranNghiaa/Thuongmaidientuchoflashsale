@@ -130,12 +130,12 @@ public static class OrderingModule
     }
 }
 
-public class PlaceOrderRequest
+internal class PlaceOrderRequest
 {
     public List<PlaceOrderItemRequest> Items { get; set; } = new();
 }
 
-public class PlaceOrderItemRequest
+internal class PlaceOrderItemRequest
 {
     public string SkuId { get; set; } = string.Empty;
     public int Quantity { get; set; }
